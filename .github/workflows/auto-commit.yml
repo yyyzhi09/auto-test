@@ -25,6 +25,6 @@ jobs:
       - name: Commit changes
         run: |
           git add .
-          git commit -m "🌿 Auto commit $(date)" || echo "No changes to commit"
+          git commit -m "🌿 auto commit $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
           git push
 
