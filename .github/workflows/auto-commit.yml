@@ -2,7 +2,7 @@ name: Auto Commit
 
 on:
   schedule:
-    - cron: "30 8 1-31/3 * *"  # 每3天执行一次（UTC 7 点）
+    - cron: "30 6 1-31/3 * *"  # 每3天执行一次（UTC 7 点）
   workflow_dispatch:   
 
 jobs:
@@ -13,6 +13,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+        # ① 随机延迟 0–3 小时（10800 秒）
+      - name: Random delay (0–3 hours)
+        run: |
+          delay=$((RANDOM % 10800))
+          echo "⏳ Random delay for $delay seconds..."
+          sleep $delay
+          
+      # ② 生成随机每日语录
+      - name: Generate random quote
+        id: quote
+        run: |
+          QUOTES=(
+            "Stay hungry, stay foolish."
+            "Simplicity is the soul of efficiency."
+            "The best time to plant a tree was 20 years ago. The second best time is now."
+            "Do one thing every day that scares you."
+            "Code is like humor. When you have to explain it, it’s bad."
+            "The quieter you become, the more you are able to hear."
+            "Dream big. Work hard. Stay humble."
+          )
+          RANDOM_INDEX=$((RANDOM % ${#QUOTES[@]}))
+          echo "quote=${QUOTES[$RANDOM_INDEX]}" >> $GITHUB_OUTPUT
+          
       - name: Set git config
         run: |
           git config --global user.name "github-actions[bot]"
@@ -20,11 +43,12 @@ jobs:
 
       - name: Make changes
         run: |
-          echo "$(date)" >> keepalive.txt
+          echo "$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S') - ${{ steps.quote.outputs.quote }}" >> keepalive.txt
+
 
       - name: Commit changes
         run: |
           git add .
-          git commit -m "🌿 auto commit $(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git commit -m "🌿 auto commit on $(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
           git push
 
