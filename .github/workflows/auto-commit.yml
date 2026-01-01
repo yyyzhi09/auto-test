@@ -35,6 +35,17 @@ jobs:
           )
           RANDOM_INDEX=$((RANDOM % ${#QUOTES[@]}))
           echo "quote=${QUOTES[$RANDOM_INDEX]}" >> $GITHUB_OUTPUT
+
+       # 💡 每月1号清空文件
+      - name: Clean up keepalive.txt on 1st day of month
+        run: |
+          day=$(TZ='Asia/Shanghai' date +%d)
+          if [ "$day" -eq 1 ]; then
+            echo "🧹 It's the 1st day of the month — clearing keepalive.txt"
+            > keepalive.txt
+          else
+            echo "Not the 1st day ($day), skip cleanup."
+          fi
           
       - name: Set git config
         run: |
