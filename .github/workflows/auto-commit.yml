@@ -1,1 +1,31 @@
+name: Auto Commit
+
+on:
+  schedule:
+    # 每天早上 7 点（UTC 时间）执行
+    - cron: "0 7 1-31/3 * *"
+  workflow_dispatch: # 手动触发
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set git config
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Make changes
+        run: |
+          echo "$(date)" >> keepalive.txt
+
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "🌿 Auto commit $(date)" || echo "No changes to commit"
+          git push
 
