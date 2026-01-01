@@ -2,7 +2,7 @@ name: Auto Commit
 
 on:
   schedule:
-    - cron: "30 10 1-31/3 * *"  # 每3天执行一次（UTC 7 点）
+    - cron: "30 8 1-31/3 * *"  # 每3天执行一次（UTC 7 点）
   workflow_dispatch:   
 
 jobs:
@@ -25,6 +25,6 @@ jobs:
       - name: Commit changes
         run: |
           git add .
-          git commit -m "🌿 auto commit $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git commit -m "🌿 auto commit $(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
           git push
 
